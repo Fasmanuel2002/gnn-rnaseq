@@ -13,7 +13,7 @@ class Preprocess:
     "Tissue Prospective Collection Indicator", "Tissue Retrospective Collection Indicator",
     "Number of Samples Per Patient", "Days to Sample Collection.",
     # Leak the label (survival / follow-up outcomes)
-    "Overall Survival (Months)", "Death from Initial Pathologic Diagnosis Date",
+    "Death from Initial Pathologic Diagnosis Date",
     "Days to Last Followup", "Disease Free (Months)", "Disease Free Status",
     "Person Neoplasm Status", "New Neoplasm Event Post Initial Therapy Indicator",
     "Metastatic tumor indicator", "Metastatic Site", "Metastatic Site Other",
@@ -70,7 +70,7 @@ class Preprocess:
     
     def run_pipeline(self) -> pd.DataFrame:
         """
-        Returns one row per primary-tumor sample: Patient ID, label, then log2(RSEM + 1) genes.
+        Returns one row per primary-tumor sample: Patient ID, label, Overall Survival (Months), then log2(RSEM + 1) genes.
         """
         df_cga = self.TextToCsv(file_path=self.cga_dataset)
         df_cga = self.drop_columns(df_cga=df_cga).set_index("Sample ID")
@@ -79,7 +79,7 @@ class Preprocess:
         df_mrna = self.eliminate_zero_genes(df_mrna=df_mrna)
         df_mrna = self.eliminate_low_mean_genes(df_mrna=df_mrna)
         df_mrna = np.log2(df_mrna + 1)
-        return df_cga[["Patient ID", "label"]].join(df_mrna, how="inner")
+        return df_cga[["Patient ID", "label", "Overall Survival (Months)"]].join(df_mrna, how="inner")
     
     def load_mrna(self) -> pd.DataFrame:
         """
