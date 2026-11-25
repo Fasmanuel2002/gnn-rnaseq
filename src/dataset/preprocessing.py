@@ -79,7 +79,10 @@ class Preprocess:
         df_mrna = self.eliminate_zero_genes(df_mrna=df_mrna)
         df_mrna = self.eliminate_low_mean_genes(df_mrna=df_mrna)
         df_mrna = np.log2(df_mrna + 1)
-        return df_cga[["Patient ID", "label", "Overall Survival (Months)"]].join(df_mrna, how="inner")
+        df_cga =  df_cga[["Patient ID", "label", "Overall Survival (Months)"]].join(df_mrna, how="inner")
+        df_cga = df_cga.dropna()
+        df_cga = df_cga[df_cga["Overall Survival (Months)"] > 0]
+        return df_cga
     
     def load_mrna(self) -> pd.DataFrame:
         """
